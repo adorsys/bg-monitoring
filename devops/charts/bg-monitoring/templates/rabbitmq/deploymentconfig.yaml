@@ -1,0 +1,25 @@
+apiVersion: apps.openshift.io/v1
+kind: DeploymentConfig
+metadata:
+  name: {{ .Chart.Name }}-rabbitmq
+spec:
+  selector:
+    app: {{ .Chart.Name }}-rabbitmq
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: {{ .Chart.Name }}-rabbitmq
+    spec:
+      containers:
+        - name: {{ .Chart.Name }}-rabbitmq
+          image: rabbitmq:3.8.1
+          ports:
+            - containerPort: 5672
+          volumeMounts:
+            - name: rabbitmq-volume
+              mountPath: /var/lib/rabbitmq
+      volumes:
+        - name: rabbitmq-volume
+          persistentVolumeClaim:
+            claimName: {{ .Chart.Name }}-rabbitmq

@@ -1,0 +1,25 @@
+apiVersion: apps.openshift.io/v1
+kind: DeploymentConfig
+metadata:
+  name: {{ .Chart.Name }}-grafana
+spec:
+  selector:
+    app: {{ .Chart.Name }}-grafana
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: {{ .Chart.Name }}-grafana
+    spec:
+      containers:
+        - name: {{ .Chart.Name }}-grafana
+          image: grafana/grafana:6.4.4
+          ports:
+            - containerPort: 3000
+          volumeMounts:
+            - name: grafana-volume
+              mountPath: /var/lib/grafana
+      volumes:
+        - name: grafana-volume
+          persistentVolumeClaim:
+            claimName: {{ .Chart.Name }}-grafana
