@@ -70,11 +70,6 @@ https://github.com/checkstyle/checkstyle/blob/checkstyle-8.19/src/main/resources
         <module name="NeedBraces"/>
         <module name="RightCurly"/>
 
-        <!-- Checks for class design                         -->
-        <!-- See http://checkstyle.sourceforge.net/config_design.html -->
-        <module name="FinalClass"/>
-        <module name="InterfaceIsType"/>
-
         <!-- Miscellaneous other checks.                   -->
         <!-- See http://checkstyle.sourceforge.net/config_misc.html -->
         <module name="ArrayTypeStyle"/>
