@@ -16,3 +16,18 @@ spec:
           image: "{{ .Values.image }}"
           ports:
             - containerPort: 8080
+          env:
+            - name: SPRING_RABBITMQ_HOST
+              value: {{ .Chart.Name }}-rabbitmq
+            - name: BG_MONITORING_SERVER_INFLUXDB_URL
+              value: "http://{{ .Chart.Name }}-influxdb:8086"
+            - name: BG_MONITORING_SERVER_INFLUXDB_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: influxdb-credentials
+                  key: write-access-username
+            - name: BG_MONITORING_SERVER_INFLUXDB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: influxdb-credentials
+                  key: write-access-password
