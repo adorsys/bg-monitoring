@@ -1,4 +1,4 @@
-package de.adorsys.bg.monitoring.client.rabbitmq;
+package de.adorsys.bg.monitoring.client;
 
 import de.adorsys.bg.monitoring.api.MonitoringMessage;
 import org.junit.jupiter.api.Test;
@@ -9,7 +9,7 @@ import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 
 class RabbitMonitoringClientTest {
 
-    private final RabbitMonitoringClient rabbitMonitoringClient = new RabbitMonitoringClient(null);
+    private final RabbitMonitoringClient rabbitMonitoringClient = new RabbitMonitoringClient(null, null);
 
     @Test
     void nullPropertiesAreNotSerialized() throws Exception {
