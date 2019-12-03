@@ -30,6 +30,8 @@ services:
       - influxdb:/var/lib/influxdb
     ports:
       - "8086:8086"
+    environment:
+      - INFLUXDB_DB=bg_monitoring
   grafana:
     image: grafana/grafana:6.4.4
     volumes:

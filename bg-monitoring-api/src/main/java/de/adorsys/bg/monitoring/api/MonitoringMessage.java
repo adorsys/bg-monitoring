@@ -21,7 +21,7 @@ public final class MonitoringMessage {
     private final String functionName; // e.g. get account transactions
     // up to 5 text fields which could be filled differently for each function name
     private final Map<String, String> fields;
-    private final int status;
+    private final Integer status;
     private final String errorMessage;
 
     public static Builder builder() {
@@ -56,7 +56,7 @@ public final class MonitoringMessage {
         private String source;
         private String functionName;
         private Map<String, String> fields;
-        private int status;
+        private Integer status;
         private String errorMessage;
 
         private Builder() {
@@ -144,11 +144,11 @@ public final class MonitoringMessage {
             return this;
         }
 
-        public int getStatus() {
+        public Integer getStatus() {
             return status;
         }
 
-        public Builder setStatus(int status) {
+        public Builder setStatus(Integer status) {
             this.status = status;
             return this;
         }
@@ -191,7 +191,7 @@ public final class MonitoringMessage {
         return fields;
     }
 
-    public int getStatus() {
+    public Integer getStatus() {
         return status;
     }
 
@@ -204,14 +204,14 @@ public final class MonitoringMessage {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         MonitoringMessage that = (MonitoringMessage) o;
-        return status == that.status &&
-            Objects.equals(timestamp, that.timestamp) &&
+        return Objects.equals(timestamp, that.timestamp) &&
             Objects.equals(correlationId, that.correlationId) &&
             Objects.equals(bankCode, that.bankCode) &&
             Objects.equals(iban, that.iban) &&
             Objects.equals(source, that.source) &&
             Objects.equals(functionName, that.functionName) &&
             Objects.equals(fields, that.fields) &&
+            Objects.equals(status, that.status) &&
             Objects.equals(errorMessage, that.errorMessage);
     }
 
