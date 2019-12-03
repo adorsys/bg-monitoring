@@ -8,7 +8,7 @@
         <version>2.2.1.RELEASE</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-    <groupId>de.adorsys.bg</groupId>
+    <groupId>de.adorsys.bg.monitoring</groupId>
     <artifactId>bg-monitoring</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <packaging>pom</packaging>

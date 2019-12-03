@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <artifactId>bg-monitoring</artifactId>
-        <groupId>de.adorsys.bg</groupId>
+        <groupId>de.adorsys.bg.monitoring</groupId>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
     <artifactId>bg-monitoring-api</artifactId>
