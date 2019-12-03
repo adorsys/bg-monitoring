@@ -67,7 +67,10 @@ https://github.com/checkstyle/checkstyle/blob/checkstyle-8.19/src/main/resources
         <module name="AvoidNestedBlocks"/>
         <module name="EmptyBlock"/>
         <module name="LeftCurly"/>
-        <module name="NeedBraces"/>
+        <module name="NeedBraces">
+            <!-- for generated equals -->
+            <property name="allowSingleLineStatement" value="true"/>
+        </module>
         <module name="RightCurly"/>
 
         <!-- Checks for class design                         -->

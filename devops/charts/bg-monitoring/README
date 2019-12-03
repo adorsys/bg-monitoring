@@ -1,0 +1,2 @@
+oc create secret generic rabbitmq-definitions-secret \
+    --from-file=rabbitmq.definitions.json=

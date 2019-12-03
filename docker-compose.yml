@@ -7,7 +7,7 @@ volumes:
 
 services:
   app:
-    image: bg-monitoring
+    image: bg-monitoring-server
     build: .
     ports:
       - "8080:8080"
@@ -15,11 +15,15 @@ services:
       - influxdb
       - rabbitmq
   rabbitmq:
-    image: rabbitmq:3.8.1
+    image: rabbitmq:3.8.1-management
     volumes:
       - rabbitmq:/var/lib/rabbitmq
+      - ./rabbitmq.definitions.json:/rabbitmq.definitions.json
     ports:
       - "5672:5672"
+      - "15672:15672"
+    environment:
+      - RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS=-rabbitmq_management load_definitions "/rabbitmq.definitions.json"
   influxdb:
     image: influxdb:1.7.9
     volumes:
