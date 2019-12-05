@@ -1,0 +1,8 @@
+oc create secret generic rabbitmq-definitions-secret \
+    --from-file=rabbitmq.definitions.json=
+
+oc create secret generic influxdb-credentials \
+    --from-literal=write-access-username=<username> \
+    --from-literal=write-access-password=<pw> \
+    --from-literal=read-access-username=<username> \
+    --from-literal=read-access-password=<pw>

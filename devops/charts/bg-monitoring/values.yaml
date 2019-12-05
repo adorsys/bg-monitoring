@@ -1,0 +1,6 @@
+app:
+  route:
+    host: dev-bg-monitoring-server.cloud.adorsys.de
+grafana:
+  route:
+    host: dev-bg-monitoring-grafana.cloud.adorsys.de

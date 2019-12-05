@@ -1,0 +1,42 @@
+version: "3"
+
+volumes:
+  influxdb:
+  grafana:
+  rabbitmq:
+
+services:
+  app:
+    image: bg-monitoring-server
+    build: .
+    ports:
+      - "8080:8080"
+    depends_on:
+      - influxdb
+      - rabbitmq
+  rabbitmq:
+    image: rabbitmq:3.8.1-management
+    volumes:
+      - rabbitmq:/var/lib/rabbitmq
+      - ./rabbitmq.definitions.json:/rabbitmq.definitions.json
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      - RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS=-rabbitmq_management load_definitions "/rabbitmq.definitions.json"
+  influxdb:
+    image: influxdb:1.7.9
+    volumes:
+      - influxdb:/var/lib/influxdb
+    ports:
+      - "8086:8086"
+    environment:
+      - INFLUXDB_DB=bg_monitoring
+  grafana:
+    image: grafana/grafana:6.4.4
+    volumes:
+      - grafana:/var/lib/grafana
+    ports:
+      - "3000:3000"
+    depends_on:
+      - influxdb

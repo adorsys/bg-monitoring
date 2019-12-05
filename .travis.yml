@@ -1,0 +1,36 @@
+# https://config.travis-ci.com/explore
+language: java
+branches:
+  only:
+    - develop
+    - /^v[0-9]+\.[0-9]+\.[0-9]+(-.*)?$/
+jdk: openjdk13
+cache:
+  directories:
+    - $HOME/.m2
+services:
+  - docker
+env:
+  global:
+    - DOCKER_REGISTRY=openshift-registry.adorsys.de
+    - IMAGE=${DOCKER_REGISTRY}/bg-monitoring-dev/bg-monitoring-server:build_${TRAVIS_BUILD_NUMBER}-${TRAVIS_COMMIT}
+    - OPENSHIFT_SERVER=https://openshift.adorsys.de
+    - OC_VERSION=v3.11.0
+    - OC_VERSION_COMMIT=0cbc58b
+    - HELM_VERSION=v2.12.2
+install: skip
+script: bash devops/scripts/build.sh
+deploy:
+  - provider: script
+    skip_cleanup: true
+    script: bash devops/scripts/deploy.sh
+    on:
+      branch: develop
+  - provider: script
+    skip_cleanup: true
+    script: mvn deploy -B -P release -Dgpg.passphrase=$GPG_PASSPHRASE
+              -s devops/maven/settings.xml
+              -Dmaven.test.skip=true
+    on:
+      tags: true
+      branch: /^v[0-9]+\.[0-9]+\.[0-9]+(-.*)?$/
