@@ -1,2 +1,4 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
 de.adorsys.bg.monitoring.client.MonitoringClientAutoConfiguration
+org.springframework.boot.env.EnvironmentPostProcessor=\
+  de.adorsys.bg.monitoring.client.MonitoringClientEnvironmentPostProcessor
