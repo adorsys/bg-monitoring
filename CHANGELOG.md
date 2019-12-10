@@ -8,6 +8,8 @@ This change log follows the conventions of [keepachangelog.com](http://keepachan
 Client with monitoring disabled tries to establish connection to rabbitmq.
 Failing `RabbitHealthIndicator` causes k8s deployment failure
 because it uses `/actuator/health` as readiness probe.
+- [#10](https://github.com/adorsys/bg-monitoring/issues/10)
+`errorMessage` is null if an exception is caught by `@ExceptionHandler`
 
 ## [v0.1.0-rc1] - 2019-12-05
 ### Added
