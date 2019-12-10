@@ -10,7 +10,7 @@
     </parent>
     <groupId>de.adorsys.bg.monitoring</groupId>
     <artifactId>bg-monitoring</artifactId>
-    <version>0.1.0-rc1</version>
+    <version>0.1.0-rc2</version>
     <packaging>pom</packaging>
     <modules>
         <module>bg-monitoring-api</module>
