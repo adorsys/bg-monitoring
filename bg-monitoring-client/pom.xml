@@ -6,7 +6,7 @@
     <parent>
         <artifactId>bg-monitoring</artifactId>
         <groupId>de.adorsys.bg.monitoring</groupId>
-        <version>0.1.0-rc2</version>
+        <version>0.1.0-rc3-SNAPSHOT</version>
     </parent>
     <artifactId>bg-monitoring-client</artifactId>
 
