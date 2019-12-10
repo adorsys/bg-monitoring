@@ -41,7 +41,7 @@ public class MonitoringHandlerInterceptor extends HandlerInterceptorAdapter {
             .setSource(serviceName)
             .setFunctionName(handlerMethod.getMethod().getName())
             .setStatus(response.getStatus())
-            .setErrorMessage(ex != null ? ex.getMessage() : null);
+            .setErrorMessage(MonitoringContext.getErrorMessage());
         try {
             monitoringClient.send(messageBuilder.build());
         } catch (IOException e) {
