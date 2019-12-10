@@ -4,6 +4,7 @@ public final class MonitoringContext {
     private static final ThreadLocal<String> correlationId = new ThreadLocal<>();
     private static final ThreadLocal<String> bankCode = new ThreadLocal<>();
     private static final ThreadLocal<String> iban = new ThreadLocal<>();
+    private static final ThreadLocal<String> errorMessage = new ThreadLocal<>();
 
     public static String getCorrelationId() {
         return correlationId.get();
@@ -29,9 +30,18 @@ public final class MonitoringContext {
         MonitoringContext.iban.set(iban);
     }
 
+    public static String getErrorMessage() {
+        return errorMessage.get();
+    }
+
+    public static void setErrorMessage(String errorMessage) {
+        MonitoringContext.errorMessage.set(errorMessage);
+    }
+
     public static void clear() {
         correlationId.remove();
         bankCode.remove();
         iban.remove();
+        errorMessage.remove();
     }
 }
