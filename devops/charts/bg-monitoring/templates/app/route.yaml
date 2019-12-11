@@ -1,14 +1,28 @@
+{{ if and .Values.app.enabled .Values.app.route.enabled }}
+---
 apiVersion: route.openshift.io/v1
 kind: Route
 metadata:
-  name: {{ .Chart.Name }}-app
+{{- with .Values.app.route.annotations }}
+  annotations:
+{{ toYaml . | indent 4 }}
+{{- end }}
+  name: {{ template "bg-monitoring.fullname" . }}-app
+  labels:
+{{ include "bg-monitoring.labels" . | indent 4 }}
+    app.kubernetes.io/component: app
+    app: bg-monitoring
 spec:
-  host: {{ .Values.app.route.host }}
+  host: {{ tpl .Values.app.route.host . | quote }}
   port:
-    targetPort: 8080-tcp
+    targetPort: http
+{{- with .Values.app.route.tls }}
   tls:
-    insecureEdgeTerminationPolicy: Redirect
-    termination: edge
+{{ toYaml . | indent 4 }}
+{{- end }}
   to:
     kind: Service
-    name: {{ .Chart.Name }}-app
+    name: {{ template "bg-monitoring.fullname" . }}-app
+    weight: 100
+    wildcardPolicy: None
+{{- end }}

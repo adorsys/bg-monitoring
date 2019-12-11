@@ -1,0 +1,76 @@
+{{ if .Values.rabbitmq.enabled }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+{{- with .Values.rabbitmq.deploymentAnnotations }}
+{{ toYaml . | indent 4 }}
+{{- end }}
+  name: {{ template "bg-monitoring.fullname" . }}-rabbitmq
+  labels:
+{{ include "bg-monitoring.labels" . | indent 4 }}
+    app.kubernetes.io/component: "rabbitmq"
+    app: "bg-monitoring"
+spec:
+  replicas: {{ .Values.rabbitmq.replicas }}
+  selector:
+    matchLabels:
+{{ include "bg-monitoring.matchLabels" . | indent 6 }}
+      app.kubernetes.io/component: rabbitmq
+      app: bg-monitoring
+  template:
+    metadata:
+      annotations:
+        checksum/secret: {{ include (print $.Template.BasePath "/rabbitmq/secret.yaml") . | sha256sum }}
+      labels:
+{{ include "bg-monitoring.matchLabels" . | indent 8 }}
+        app.kubernetes.io/component: rabbitmq
+        app: bg-monitoring
+{{- with .Values.rabbitmq.podAnnotations }}
+      annotations:
+{{ toYaml . | indent 8 }}
+{{- end }}
+    spec:
+      containers:
+      - name: rabbitmq
+        image: "{{ .Values.rabbitmq.image.name }}:{{ .Values.rabbitmq.image.tag }}"
+        imagePullPolicy: {{ .Values.rabbitmq.image.pullPolicy }}
+        ports:
+          - containerPort: 5672
+        volumeMounts:
+          - name: rabbitmq-volume
+            mountPath: /var/lib/rabbitmq
+          - name: rabbitmq-secret-config
+            mountPath: /mnt/etc/rabbitmq/rabbitmq.definitions.json
+            subPath: rabbitmq.definitions.json
+        env:
+        - name: TZ
+          value: {{ .Values.timezone | quote }}
+        {{- range $name, $value := .Values.rabbitmq.env }}
+        {{- if not (empty $value) }}
+        - name: {{ $name | quote }}
+          value: {{ tpl (toString $value) $ | quote }}
+        {{- end }}
+        {{- end }}
+        - name: RABBITMQ_DEFAULT_USER
+          valueFrom:
+              secretKeyRef:
+                  key: RABBITMQ_DEFAULT_USER
+                  name: "{{ template "bg-monitoring.fullname" . }}-rabbitmq"
+        - name: RABBITMQ_DEFAULT_PASS
+          valueFrom:
+              secretKeyRef:
+                  key: RABBITMQ_DEFAULT_PASS
+                  name: "{{ template "bg-monitoring.fullname" . }}-rabbitmq"
+      volumes:
+        - name: rabbitmq-volume
+          persistentVolumeClaim:
+            claimName: {{ template "bg-monitoring.fullname" . }}-rabbitmq
+        - name: rabbitmq-secret-config
+          secret:
+            secretName: "{{ template "bg-monitoring.fullname" . }}-rabbitmq"
+            items:
+            - key: rabbitmq.definitions.json
+              path: rabbitmq.definitions.json
+{{- end }}

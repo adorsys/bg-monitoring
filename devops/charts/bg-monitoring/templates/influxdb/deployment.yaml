@@ -1,0 +1,77 @@
+{{ if .Values.influxdb.enabled }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+{{- with .Values.influxdb.deploymentAnnotations }}
+{{ toYaml . | indent 4 }}
+{{- end }}
+  name: {{ template "bg-monitoring.fullname" . }}-influxdb
+  labels:
+{{ include "bg-monitoring.labels" . | indent 4 }}
+    app.kubernetes.io/component: "influxdb"
+    app: "bg-monitoring"
+spec:
+  replicas: {{ .Values.influxdb.replicas }}
+  selector:
+    matchLabels:
+{{ include "bg-monitoring.matchLabels" . | indent 6 }}
+      app.kubernetes.io/component: influxdb
+      app: bg-monitoring
+  template:
+    metadata:
+      annotations:
+        checksum/secret: {{ include (print $.Template.BasePath "/influxdb/secret.yaml") . | sha256sum }}
+      labels:
+{{ include "bg-monitoring.matchLabels" . | indent 8 }}
+        app.kubernetes.io/component: influxdb
+        app: bg-monitoring
+{{- with .Values.influxdb.podAnnotations }}
+      annotations:
+{{ toYaml . | indent 8 }}
+{{- end }}
+    spec:
+      containers:
+      - name: influxdb
+        image: "{{ .Values.influxdb.image.name }}:{{ .Values.influxdb.image.tag }}"
+        imagePullPolicy: {{ .Values.influxdb.image.pullPolicy }}
+        ports:
+          - containerPort: 8086
+        volumeMounts:
+          - name: influxdb-volume
+            mountPath: /var/lib/influxdb
+        env:
+        - name: TZ
+          value: {{ .Values.timezone | quote }}
+        {{- range $name, $value := .Values.influxdb.env }}
+        {{- if not (empty $value) }}
+        - name: {{ $name | quote }}
+          value: {{ tpl (toString $value) $ | quote }}
+        {{- end }}
+        {{- end }}
+        - name: INFLUXDB_WRITE_USER
+          valueFrom:
+              secretKeyRef:
+                  key: INFLUXDB_WRITE_USER
+                  name: "{{ template "bg-monitoring.fullname" . }}-influxdb"
+        - name: INFLUXDB_WRITE_USER_PASSWORD
+          valueFrom:
+              secretKeyRef:
+                  key: INFLUXDB_WRITE_USER_PASSWORD
+                  name: "{{ template "bg-monitoring.fullname" . }}-influxdb"
+        - name: INFLUXDB_READ_USER
+          valueFrom:
+              secretKeyRef:
+                  key: INFLUXDB_READ_USER
+                  name: "{{ template "bg-monitoring.fullname" . }}-influxdb"
+        - name: INFLUXDB_READ_USER_PASSWORD
+          valueFrom:
+              secretKeyRef:
+                  key: INFLUXDB_READ_USER_PASSWORD
+                  name: "{{ template "bg-monitoring.fullname" . }}-influxdb"
+      volumes:
+          - name: influxdb-volume
+            persistentVolumeClaim:
+              claimName: {{ template "bg-monitoring.fullname" . }}-influxdb
+{{- end }}
