@@ -13,7 +13,7 @@ sudo mv linux-amd64/helm /usr/local/bin/helm
 
 # push docker image
 docker login -u $DOCKER_USER -p $DOCKER_PASSWORD $DOCKER_REGISTRY
-docker push $IMAGE$TAG
+docker push $IMAGE:$TAG
 
 # deploy helm chart
 oc login $OPENSHIFT_SERVER --token $HELM_TOKEN
