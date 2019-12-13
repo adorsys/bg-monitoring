@@ -1,5 +1,6 @@
 To install or upgrade helm chart in specific namespace and use all env variables
-helm upgrade -i ${HELM_RELEASE} --namespace=${OPENSIFT_NAMESPACE} -f  env/${HELM_STAGE}/env.yaml -f env/${HELM_STAGE}/secrets.yaml
+cd devops/charts/bg-monitoring
+helm upgrade -i ${HELM_RELEASE} . --namespace=${OPENSHIFT_NAMESPACE} -f env/${HELM_STAGE}/env.yaml -f env/${HELM_STAGE}/secrets.yaml
 #HELM_RELEASE = Name of your helm release
 #OPENSHIFT_NAMESPACE = Namespace where you want to install
 #env/${HELM_STAGE}/env.yaml = Path to file in directory for example env/develop/env.yaml if you want to override default settings from values.yaml

@@ -13,14 +13,17 @@ sudo mv linux-amd64/helm /usr/local/bin/helm
 
 # push docker image
 docker login -u $DOCKER_USER -p $DOCKER_PASSWORD $DOCKER_REGISTRY
-docker push $IMAGE
+docker push $IMAGE$TAG
 
 # deploy helm chart
 oc login $OPENSHIFT_SERVER --token $HELM_TOKEN
 helm init --client-only
+cd devops/charts/bg-monitoring
 helm upgrade --install --wait \
   --tiller-namespace xs2a-adapter-tiller \
   --namespace bg-monitoring-dev \
-  --set image=${IMAGE} \
-  bg-monitoring-dev \
-  devops/charts/bg-monitoring
+  -f env/develop/env.yaml \
+  -f env/develop/secrets.yaml \
+  --set app.image.tag=${TAG} \
+  --set app.image.name=${IMAGE} \
+  bg-monitoring-dev .
