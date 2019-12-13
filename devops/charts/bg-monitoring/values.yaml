@@ -4,7 +4,7 @@ app:
   enabled: true #enable app deployment,secret,service,pvc
   replicas: 1
   image:
-    stream: true #enable annotation to look for stream image name
+    stream: false #enable annotation to look for stream image name
     stream_name: bg-monitoring-server 
     stream_tag: "latest"
     pullPolicy: Always
@@ -53,7 +53,7 @@ influxdb:
     name: influxdb
     tag: "1.7.9"
   env:
-    INFLUXDB_DB: bg_monitoring 
+    INFLUXDB_DB: bg_monitoring
 # RabbitMQ configuration
 rabbitmq:
   enabled: true #enable Rabbitmq deployment,secret,service,pvc
@@ -64,4 +64,4 @@ rabbitmq:
   env:
     RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS: -rabbitmq_management load_definitions "/mnt/etc/rabbitmq/rabbitmq.definitions.json"
   data:
-    config: data/banking-gateway-dev/rabbitmq/rabbitmq.definitions.json
+    config: data/develop/rabbitmq/rabbitmq.definitions.json
