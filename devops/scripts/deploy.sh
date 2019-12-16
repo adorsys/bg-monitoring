@@ -26,4 +26,4 @@ helm upgrade --install --wait \
   -f env/develop/secrets.yaml \
   --set app.image.tag=${TAG} \
   --set app.image.name=${IMAGE} \
-  bg-monitoring-dev .
+  dev-bg-monitoring .
