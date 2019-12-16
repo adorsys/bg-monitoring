@@ -11,7 +11,6 @@ metadata:
   labels:
 {{ include "bg-monitoring.labels" . | indent 4 }}
     app.kubernetes.io/component: rabbitmq
-    app: bg-monitoring
 spec:
   type: ClusterIP
   ports:
@@ -21,5 +20,4 @@ spec:
   selector:
 {{ include "bg-monitoring.matchLabels" . | indent 4 }}
     app.kubernetes.io/component: rabbitmq
-    app: bg-monitoring
 {{- end }}

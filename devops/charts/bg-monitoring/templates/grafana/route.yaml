@@ -11,11 +11,10 @@ metadata:
   labels:
 {{ include "bg-monitoring.labels" . | indent 4 }}
     app.kubernetes.io/component: grafana
-    app: bg-monitoring
 spec:
   host: {{ tpl .Values.grafana.route.host . | quote }}
   port:
-    targetPort: http
+    targetPort: default
 {{- with .Values.grafana.route.tls }}
   tls:
 {{ toYaml . | indent 4 }}

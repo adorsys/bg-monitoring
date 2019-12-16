@@ -11,11 +11,10 @@ metadata:
   labels:
 {{ include "bg-monitoring.labels" . | indent 4 }}
     app.kubernetes.io/component: app
-    app: bg-monitoring
 spec:
   host: {{ tpl .Values.app.route.host . | quote }}
   port:
-    targetPort: http
+    targetPort: default
 {{- with .Values.app.route.tls }}
   tls:
 {{ toYaml . | indent 4 }}

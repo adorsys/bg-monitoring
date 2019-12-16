@@ -21,14 +21,12 @@ metadata:
   labels:
 {{ include "bg-monitoring.labels" . | indent 4 }}
     app.kubernetes.io/component: "app"
-    app: "bg-monitoring"
 spec:
   replicas: {{ .Values.app.replicas }}
   selector:
     matchLabels:
 {{ include "bg-monitoring.matchLabels" . | indent 6 }}
       app.kubernetes.io/component: app
-      app: bg-monitoring
   template:
     metadata:
       annotations:
@@ -36,7 +34,6 @@ spec:
       labels:
 {{ include "bg-monitoring.matchLabels" . | indent 8 }}
         app.kubernetes.io/component: app
-        app: bg-monitoring
 {{- with .Values.app.podAnnotations }}
       annotations:
 {{ toYaml . | indent 8 }}

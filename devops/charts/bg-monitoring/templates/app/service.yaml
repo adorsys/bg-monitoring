@@ -11,16 +11,14 @@ metadata:
   labels:
 {{ include "bg-monitoring.labels" . | indent 4 }}
     app.kubernetes.io/component: app
-    app: bg-monitoring
 spec:
   type: ClusterIP
   ports:
-    - name: http
+    - name: default
       port: 8080
       protocol: TCP
       targetPort: 8080
   selector:
 {{ include "bg-monitoring.matchLabels" . | indent 4 }}
     app.kubernetes.io/component: app
-    app: bg-monitoring
 {{- end }}
