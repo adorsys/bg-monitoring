@@ -13,7 +13,8 @@ services:
 env:
   global:
     - DOCKER_REGISTRY=openshift-registry.adorsys.de
-    - IMAGE=${DOCKER_REGISTRY}/bg-monitoring-dev/bg-monitoring-server:build_${TRAVIS_BUILD_NUMBER}-${TRAVIS_COMMIT}
+    - IMAGE=${DOCKER_REGISTRY}/bg-monitoring-dev/bg-monitoring-server
+    - TAG=build_${TRAVIS_BUILD_NUMBER}-${TRAVIS_COMMIT}
     - OPENSHIFT_SERVER=https://openshift.adorsys.de
     - OC_VERSION=v3.11.0
     - OC_VERSION_COMMIT=0cbc58b

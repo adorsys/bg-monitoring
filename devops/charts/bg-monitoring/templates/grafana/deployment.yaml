@@ -1,0 +1,61 @@
+{{ if .Values.grafana.enabled }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+{{- with .Values.grafana.deploymentAnnotations }}
+{{ toYaml . | indent 4 }}
+{{- end }}
+  name: {{ template "bg-monitoring.fullname" . }}-grafana
+  labels:
+{{ include "bg-monitoring.labels" . | indent 4 }}
+    app.kubernetes.io/component: "grafana"
+spec:
+  replicas: {{ .Values.grafana.replicas }}
+  selector:
+    matchLabels:
+{{ include "bg-monitoring.matchLabels" . | indent 6 }}
+      app.kubernetes.io/component: grafana
+  template:
+    metadata:
+      annotations:
+        checksum/secret: {{ include (print $.Template.BasePath "/grafana/secret.yaml") . | sha256sum }}
+      labels:
+{{ include "bg-monitoring.matchLabels" . | indent 8 }}
+        app.kubernetes.io/component: grafana
+{{- with .Values.grafana.podAnnotations }}
+      annotations:
+{{ toYaml . | indent 8 }}
+{{- end }}
+    spec:
+      containers:
+      - name: grafana
+        image: "{{ .Values.grafana.image.name }}:{{ .Values.grafana.image.tag }}"
+        imagePullPolicy: {{ .Values.grafana.image.pullPolicy }}
+        ports:
+        - name: http
+          containerPort: 3000
+          protocol: TCP
+        volumeMounts:
+          - name: grafana-volume
+            mountPath: /var/lib/grafana
+        env:
+        - name: TZ
+          value: {{ .Values.timezone | quote }}
+        {{- range $name, $value := .Values.grafana.env }}
+        {{- if not (empty $value) }}
+        - name: {{ $name | quote }}
+          value: {{ tpl (toString $value) $ | quote }}
+        {{- end }}
+        {{- end }}
+        - name: GF_SECURITY_ADMIN_PASSWORD
+          valueFrom:
+              secretKeyRef:
+                  key: GF_SECURITY_ADMIN_PASSWORD
+                  name: "{{ template "bg-monitoring.fullname" . }}-grafana"
+      volumes:
+          - name: grafana-volume
+            persistentVolumeClaim:
+              claimName: {{ template "bg-monitoring.fullname" . }}-grafana
+{{- end }}

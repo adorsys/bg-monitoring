@@ -1,0 +1,71 @@
+{{ if .Values.app.enabled }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+{{- with .Values.app.deploymentAnnotations }}
+{{ toYaml . | indent 4 }}
+{{- end }}
+{{- if .Values.app.image.stream }}
+    image.openshift.io/triggers: |
+      [{
+        "from": {
+          "kind": "ImageStreamTag",
+          "name": "{{ .Values.app.image.stream_name }}:latest"
+        },
+        "fieldPath": "spec.template.spec.containers[?(@.name==\"app\")].image"
+      }]
+{{- end}}
+  name: {{ template "bg-monitoring.fullname" . }}-app
+  labels:
+{{ include "bg-monitoring.labels" . | indent 4 }}
+    app.kubernetes.io/component: "app"
+spec:
+  replicas: {{ .Values.app.replicas }}
+  selector:
+    matchLabels:
+{{ include "bg-monitoring.matchLabels" . | indent 6 }}
+      app.kubernetes.io/component: app
+  template:
+    metadata:
+      annotations:
+        checksum/secret-influxdb: {{ include (print $.Template.BasePath "/influxdb/secret.yaml") . | sha256sum }}
+      labels:
+{{ include "bg-monitoring.matchLabels" . | indent 8 }}
+        app.kubernetes.io/component: app
+{{- with .Values.app.podAnnotations }}
+      annotations:
+{{ toYaml . | indent 8 }}
+{{- end }}
+    spec:
+      containers:
+      - name: app
+{{- if .Values.app.image.stream }}
+        image: " "
+{{- else }}
+        image: "{{ .Values.app.image.name }}:{{ .Values.app.image.tag }}"
+{{- end }}
+        imagePullPolicy: {{ .Values.app.image.pullPolicy }}
+        ports:
+          - containerPort: 8080
+        env:
+        - name: TZ
+          value: {{ .Values.timezone | quote }}
+        {{- range $name, $value := .Values.app.env }}
+        {{- if not (empty $value) }}
+        - name: {{ $name | quote }}
+          value: {{ tpl (toString $value) $ | quote }}
+        {{- end }}
+        {{- end }}
+        - name: BG_MONITORING_SERVER_INFLUXDB_USERNAME
+          valueFrom:
+              secretKeyRef:
+                  key: INFLUXDB_WRITE_USER
+                  name: "{{ template "bg-monitoring.fullname" . }}-influxdb"
+        - name: BG_MONITORING_SERVER_INFLUXDB_PASSWORD
+          valueFrom:
+              secretKeyRef:
+                  key: INFLUXDB_WRITE_USER_PASSWORD
+                  name: "{{ template "bg-monitoring.fullname" . }}-influxdb"
+{{- end }}

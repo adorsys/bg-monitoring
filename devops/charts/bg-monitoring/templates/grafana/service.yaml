@@ -1,12 +1,24 @@
+{{ if .Values.grafana.enabled }}
+---
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ .Chart.Name }}-grafana
+{{- with .Values.grafana.serviceAnnotations }}
+   annotations:
+{{ toYaml . | indent 4 }}
+{{- end }}
+  name: {{ template "bg-monitoring.fullname" . }}-grafana
+  labels:
+{{ include "bg-monitoring.labels" . | indent 4 }}
+    app.kubernetes.io/component: grafana
 spec:
-  selector:
-    deploymentconfig: {{ .Chart.Name }}-grafana
+  type: ClusterIP
   ports:
-    - name: 3000-tcp
+    - name: default
       port: 3000
       protocol: TCP
       targetPort: 3000
+  selector:
+{{ include "bg-monitoring.matchLabels" . | indent 4 }}
+    app.kubernetes.io/component: grafana
+{{- end }}

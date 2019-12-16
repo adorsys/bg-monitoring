@@ -1,6 +1,67 @@
+timezone: Europe/Berlin
+#Monitoring server configuration
 app:
+  enabled: true #enable app deployment,secret,service,pvc
+  replicas: 1
+  image:
+    stream: false #enable annotation to look for stream image name
+    stream_name: bg-monitoring-server 
+    stream_tag: "latest"
+    pullPolicy: Always
+    name: bg-monitoring-server #Use this if image.stream set to false
+    tag: latest #Use this if image.stream set to false
   route:
-    host: dev-bg-monitoring-server.cloud.adorsys.de
+    enabled: true #Enable external route to app
+    host: >-
+      {{ .Release.Name }}-monitoring-server.cloud.adorsys.de
+    annotations:
+        console.alpha.openshift.io/overview-app-route: "true"
+    tls:
+      insecureEdgeTerminationPolicy: Redirect
+      termination: edge
+  env:
+    SPRING_RABBITMQ_HOST: "{{ .Release.Name }}-rabbitmq"
+    BG_MONITORING_SERVER_INFLUXDB_URL: http://{{ template "bg-monitoring.fullname" . }}-influxdb:8086
+#Grafana configuration
 grafana:
-  route:
-    host: dev-bg-monitoring-grafana.cloud.adorsys.de
+  enabled: true  #enable grafana monitoring
+  replicas: 1
+  image:
+    name: grafana/grafana
+    tag: "6.4.4"
+  route: 
+    enabled: true  #enable external route to grafana
+    host: >-
+      {{ .Release.Name }}-grafana.cloud.adorsys.de
+    annotations:
+        console.alpha.openshift.io/overview-app-route: "true"
+    tls:
+      insecureEdgeTerminationPolicy: Redirect
+      termination: edge
+  env:
+    DB_HOST: "{{ .Release.Name }}-grafana"
+  resources: #set resources for grafana
+    limits:
+      memory: 500Mi
+    requests:
+      memory: 128Mi
+#InfluxDB configuration
+influxdb:
+  enabled: true #enable Influxdb deployment,secret,service,pvc
+  replicas: 1
+  image:
+    name: influxdb
+    tag: "1.7.9"
+  env:
+    INFLUXDB_DB: bg_monitoring
+# RabbitMQ configuration
+rabbitmq:
+  enabled: true #enable Rabbitmq deployment,secret,service,pvc
+  replicas: 1
+  image:
+    name: rabbitmq
+    tag: 3.8.1-management
+  env:
+    RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS: -rabbitmq_management load_definitions "/mnt/etc/rabbitmq/rabbitmq.definitions.json"
+  data:
+    config: data/develop/rabbitmq/rabbitmq.definitions.json

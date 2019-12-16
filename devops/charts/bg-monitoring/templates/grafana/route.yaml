@@ -1,14 +1,27 @@
+{{ if and .Values.grafana.enabled .Values.grafana.route.enabled }}
+---
 apiVersion: route.openshift.io/v1
 kind: Route
 metadata:
-  name: {{ .Chart.Name }}-grafana
+{{- with .Values.grafana.route.annotations }}
+  annotations:
+{{ toYaml . | indent 4 }}
+{{- end }}
+  name: {{ template "bg-monitoring.fullname" . }}-grafana
+  labels:
+{{ include "bg-monitoring.labels" . | indent 4 }}
+    app.kubernetes.io/component: grafana
 spec:
-  host: {{ .Values.grafana.route.host }}
+  host: {{ tpl .Values.grafana.route.host . | quote }}
   port:
-    targetPort: 3000-tcp
+    targetPort: default
+{{- with .Values.grafana.route.tls }}
   tls:
-    insecureEdgeTerminationPolicy: Redirect
-    termination: edge
+{{ toYaml . | indent 4 }}
+{{- end }}
   to:
     kind: Service
-    name: {{ .Chart.Name }}-grafana
+    name: {{ template "bg-monitoring.fullname" . }}-grafana
+    weight: 100
+    wildcardPolicy: None
+{{- end }}

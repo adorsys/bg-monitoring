@@ -1,8 +1,10 @@
-oc create secret generic rabbitmq-definitions-secret \
-    --from-file=rabbitmq.definitions.json=
+To install or upgrade helm chart in specific namespace and use all env variables
+cd devops/charts/bg-monitoring
+helm upgrade -i ${HELM_RELEASE} . --namespace=${OPENSHIFT_NAMESPACE} -f env/${HELM_STAGE}/env.yaml -f env/${HELM_STAGE}/secrets.yaml
+#HELM_RELEASE = Name of your helm release
+#OPENSHIFT_NAMESPACE = Namespace where you want to install
+#env/${HELM_STAGE}/env.yaml = Path to file in directory for example env/develop/env.yaml if you want to override default settings from values.yaml
+#env/${HELM_STAGE}/secrets.yaml = Path to secrets file for example env/develop/secrets.yaml where you store specific secret data
+# by default secret file not encrypted but you can use any variants to encrypt this file.
+# It needs to be decrypted before helm upgrade command or use helm-secret or helm-wrapper to load encrypted file
 
-oc create secret generic influxdb-credentials \
-    --from-literal=write-access-username=<username> \
-    --from-literal=write-access-password=<pw> \
-    --from-literal=read-access-username=<username> \
-    --from-literal=read-access-password=<pw>
