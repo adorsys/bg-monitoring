@@ -9,5 +9,5 @@ then
   mvn install -B -P release -Dgpg.passphrase=$GPG_PASSPHRASE
 else
   mvn install -B
-  docker build -t $IMAGE .
+  docker build -t $IMAGE:$TAG .
 fi
